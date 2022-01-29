@@ -34,12 +34,15 @@ Tmn = 0.2e-12;  % 0.2ps
 d = Tmn*vth;
 fprintf("Mean path is %f\n", d);
 % Initialize the number of electrons
-numE = 3;
+numE = 2;
 % Initialize the time
 deltaT = 2e-14; % Time interval per simulation step in second
-pauseTime = 0.005; % Time paused per simulation step in second
+pauseTime = 0.02; % Time paused per simulation step in second
 % Number of simulation steps
-numSim = 1000;
+numSim = 100;
+% Temperature grid
+numGridX = 10; % number of grid in x direction
+numGridY = 10; % number of grid in y direction
 
 % Add the electrons
 AddElectrons(numE, Region, vth);
@@ -51,7 +54,7 @@ hold on
 
 % Loop for simulation
 for iSim = 1:numSim
-     PlotPoint();
+     PlotPoint(numGridX, numGridY);
 
      % Store the current positions
      xp = x;
@@ -64,27 +67,28 @@ for iSim = 1:numSim
     for iE=1:numE
         % Check for invalid x position
         if x(iE) < 0
-            x(iE) = 0;
-            vx(iE) = -vx(iE);
+            x(iE) = Region.x; % Appear on right
+            xp(iE) = x(iE); 
         elseif x(iE) > Region.x
-            x(iE) = Region.x;
-            vx(iE) = -vx(iE);
+            x(iE) = 0; % Appear on left 
+            xp(iE) = x(iE);
         end
         % Check for invalid y position
         if y(iE) < 0
-            y(iE) = 0;
+            y(iE) = 0; % Reflect
             vy(iE) = -vy(iE);
         elseif y(iE) > Region.y
-            y(iE) = Region.y;
+            y(iE) = Region.y; % Reflect
             vy(iE) = -vy(iE);
         end
     end
-
-
     
     % Pause some time
     pause(pauseTime);
 end
+
+% Plot the temperature plot
+tempDisplay(numGridX, numGridY, numE, Region.x, Region.y);
 
 
 
