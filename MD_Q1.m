@@ -34,15 +34,15 @@ Tmn = 0.2e-12;  % 0.2ps
 d = Tmn*vth;
 fprintf("Mean path is %f\n", d);
 % Initialize the number of electrons
-numE = 2;
+numE = 5;
 % Initialize the time
 deltaT = 2e-14; % Time interval per simulation step in second
 pauseTime = 0.02; % Time paused per simulation step in second
 % Number of simulation steps
 numSim = 100;
 % Temperature grid
-numGridX = 10; % number of grid in x direction
-numGridY = 10; % number of grid in y direction
+numGridX = 20; % number of grid in x direction
+numGridY = 20; % number of grid in y direction
 
 % Add the electrons
 AddElectrons(numE, Region, vth);

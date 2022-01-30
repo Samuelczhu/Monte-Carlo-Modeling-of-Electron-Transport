@@ -9,8 +9,9 @@ function tempDisplay(numGridX, numGridY, numE, limitX, limitY)
 global x y vx vy  
 global limits 
 
-% Create the temperature matrix
-Temp = zeros(numGridX,numGridY);
+% Create the matrix for particle and total temperature
+matrixParticles = zeros(numGridX,numGridY);
+matrixTempTotal = zeros(numGridX, numGridY);
 
 % Calculate the deltaX and deltaY for each grid
 deltaX = limitX/numGridX;
@@ -19,13 +20,22 @@ deltaY = limitY/numGridY;
 % Loop through all the electrons
 for iE = 1:numE
     % Calculate the x index (column) in the tempeture matrix
-    indexCol = floor(x(iE)/deltaX) + 1;
-    indexRow = floor(y(iE)/deltaY) + 1;
-    % TODO: Calculate the temperature
-    
-    % Increment the temperature matrix
-    Temp(indexRow, indexCol) = Temp(indexRow, indexCol) + 1;
+    indexCol = ceil(x(iE)/deltaX);
+    indexRow = ceil(y(iE)/deltaY);
+
+    % TODO: Calculate the temperature of the particle
+    vth = sqrt(vx(iE)^2 + vy(iE)^2);
+    % Increment the total temperature matrix
+    matrixTempTotal(indexRow, indexCol) = matrixTempTotal(indexRow, indexCol) + vth;  
+    % Increment the particle matrix
+    matrixParticles(indexRow, indexCol) = matrixParticles(indexRow, indexCol) + 1;
 end
+
+% Calculate the temperature matrix
+Temp = matrixTempTotal ./ matrixParticles;
+Temp(isnan(Temp)) = 0;
+
+matrixParticles
 
 % Create the mesh grid
 [X,Y] = meshgrid(linspace(0,limitX,numGridX), linspace(0, limitY, numGridY));

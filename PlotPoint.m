@@ -10,7 +10,7 @@ plot([xp;x], [yp;y])
 % Adjust the axis limits
 axis(limits)
 % Set grid
-set(gca,'xtick',linspace(0, limits(2), numGridX))
+set(gca,'xtick',linspace(0, limits(2), numGridX));
 set(gca, 'ytick',linspace(0, limits(4), numGridY));
 grid on
 
