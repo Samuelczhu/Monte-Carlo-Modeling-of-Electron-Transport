@@ -10,8 +10,8 @@ plot([xp;x], [yp;y])
 % Adjust the axis limits
 axis(limits)
 % Set grid
-set(gca,'xtick',linspace(0, limits(2), numGridX));
-set(gca, 'ytick',linspace(0, limits(4), numGridY));
+set(gca,'xtick',linspace(0, limits(2), numGridX+1));
+set(gca, 'ytick',linspace(0, limits(4), numGridY+1));
 grid on
 
 % Add title and labels

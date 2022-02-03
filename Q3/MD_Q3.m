@@ -19,6 +19,7 @@ global x y       % arrays for the current electrons positions: 1 row, colum for 
 global xp yp     % arrays for the previous electrons positions: 1 row, column for previous position
 global vx vy     % arrays for current electrons velocities: 1 row, column for current velocity
 global limits    % Limits for the plot
+global boxes     % matrix for the boxes: n rows, and 4 columns for [x y w h]
 % Initalize global constants
 globalVars
 
@@ -45,9 +46,14 @@ numGridX = 10; % number of grid in x direction
 numGridY = 10; % number of grid in y direction
 % Array to hold temperature over time
 tempOverTime = zeros(1,numSim);
+% Boudary mode: specular(0) or diffusive(1)
+boundaryMode = 1;
+
+% Add the boxes
+numBox = AddObstacles();
 
 % Add the electrons
-AddElectrons(numE, Region, vth, T);
+AddElectrons(numE, Region, vth, T, numBox);
 
 % Calculate the scattering probability
 Pscat = 1-exp(-deltaT/Tmn);
@@ -57,6 +63,11 @@ figure(1)
 ax = axes;
 ax.ColorOrder = rand(numE,3); % Initalize color for each electron
 hold on
+% Draw the boxes
+for iBox = 1:numBox
+    rectangle("Position",boxes(iBox,:));
+end
+
 
 % Loop for simulation
 for iSim = 1:numSim
@@ -71,32 +82,95 @@ for iSim = 1:numSim
      
     % Loop through all the particles 
     for iE=1:numE
-        % flag for invalid
+        % flag for invalid position
         bInvalid = false;
+
+        % Step 1 - Check for boundary
         % Check for invalid x position
-        if x(iE) < 0
+        if x(iE) <= 0
             x(iE) = Region.x; % Appear on right
             xp(iE) = x(iE); 
             bInvalid = true;
-        elseif x(iE) > Region.x
+        elseif x(iE) >= Region.x
             x(iE) = 0; % Appear on left 
             xp(iE) = x(iE);
             bInvalid = true;
         end
         % Check for invalid y position
-        if y(iE) < 0
-            y(iE) = 0; % Reflect
-            vy(iE) = -vy(iE);
+        if y(iE) <= 0
             bInvalid = true;
-        elseif y(iE) > Region.y
-            y(iE) = Region.y; % Reflect
-            vy(iE) = -vy(iE);
+            y(iE) = 0;
+            % Check for boundary mode
+            if boundaryMode == 0  % Specular boundary
+                vy(iE) = -vy(iE);
+            else  % Diffusive boundary  TODO: check randn() is between 0-1, and check for diffusive implementation
+                vy(iE) = (sqrt(C.kb*T/C.mn).*randn()+vth);
+            end
+        elseif y(iE) >= Region.y
+            y(iE) = Region.y;
             bInvalid = true;
+            % Check for boundary mode
+            if boundaryMode == 0  % Specular boundary
+                vy(iE) = -vy(iE);
+            else  % Diffusive boundary
+                vy(iE) = -(sqrt(C.kb*T/C.mn).*randn()+vth);
+            end
+        end
+
+        % Step 2: Check for boxes
+        for iBox = 1:numBox
+            % Retrieve box info
+            boxX1 = boxes(iBox, 1);
+            boxX2 = boxes(iBox, 1)+boxes(iBox, 3);
+            boxY1 = boxes(iBox, 2);
+            boxY2 = boxes(iBox, 2)+boxes(iBox, 4);
+            % Check if the particle is inside a box
+            if (x(iE)>=boxX1 && x(iE)<=boxX2 && y(iE)>=boxY1 && y(iE) <= boxY2)
+                bInvalid = true;   %Invalid position
+                % Check for x position
+                if xp(iE) <= boxX1  % Coming from left side
+                    x(iE) = boxX1;
+                    % Check for boundary mode
+                    if boundaryMode == 0  % Specular boundary
+                        vx(iE) = -vx(iE);
+                    else  % Diffusive boundary
+                        vx(iE) = -(sqrt(C.kb*T/C.mn).*randn()+vth);
+                    end                    
+                elseif xp(iE) >= boxX2  % Coming from right side
+                    x(iE) = boxX2;                   
+                    % Check for boundary mode
+                    if boundaryMode == 0  % Specular boundary
+                        vx(iE) = -vx(iE);
+                    else  % Diffusive boundary
+                        vx(iE) = (sqrt(C.kb*T/C.mn).*randn()+vth);
+                    end
+                end
+                % Check for y position
+                if yp(iE) <= boxY1  % Coming from bottom
+                    y(iE) = boxY1;               
+                    % Check for boundary mode
+                    if boundaryMode == 0  % Specular boundary
+                        vy(iE) = -vy(iE);
+                    else  % Diffusive boundary
+                        vy(iE) = -(sqrt(C.kb*T/C.mn).*randn()+vth);
+                    end
+                elseif yp(iE) >= boxY2 % Coming from top
+                    y(iE) = boxY2;                   
+                    % Check for boundary mode
+                    if boundaryMode == 0  % Specular boundary
+                        vy(iE) = -vy(iE);
+                    else  % Diffusive boundary
+                        vy(iE) = (sqrt(C.kb*T/C.mn).*randn()+vth);
+                    end
+                end
+                % Break the loop for box
+                break;
+            end
         end
         
-        % Check for scattering
+        % Step 3: Check for scattering
         if ~bInvalid && Pscat > rand()
-            % Scatter the particle
+            % Scatter the particle  TODO: Check whether we need phi
             randPhi = rand()*2*pi;  % Random direction
             % Rethermalize
             vx(iE) = (sqrt(C.kb*T/C.mn).*randn()+vth) * cos(randPhi);
