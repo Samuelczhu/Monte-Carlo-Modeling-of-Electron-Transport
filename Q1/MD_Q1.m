@@ -45,7 +45,7 @@ numGridX = 10; % number of grid in x direction
 numGridY = 10; % number of grid in y direction
 
 % Add the electrons
-AddElectrons_Q1(numE, Region, vth);
+AddElectrons(numE, Region, vth);
 
 % Calculate the scattering probability
 Pscat = 1-exp(-deltaT/Tmn);

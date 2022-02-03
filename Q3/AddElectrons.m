@@ -3,7 +3,7 @@
 %        region = region for the electrons
 %        vth = magnitude of the velocity
 %        T = temperature in Kelvin
-function AddElectrons_Q2(numE, region, vth, T)
+function AddElectrons(numE, region, vth, T)
 global C  % Constants
 global x y % arrays for current electron positions
 global xp yp % arrays for previous electron positions
