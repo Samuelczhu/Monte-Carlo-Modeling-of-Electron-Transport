@@ -32,22 +32,26 @@ vth = sqrt(2*C.kb*T/C.mn);  % Calculate the thermal velocity
 % Initialize the mean time between collision
 Tmn = 0.2e-12;  % 0.2ps
 d = Tmn*vth;
-fprintf("Mean path is %f\n", d);
+display("Mean path is "+ d);
 % Initialize the number of electrons
-numE = 5;
+numE = 3;
 % Initialize the time
 deltaT = 2e-14; % Time interval per simulation step in second
 pauseTime = 0.02; % Time paused per simulation step in second
 % Number of simulation steps
 numSim = 100;
 % Temperature grid
-numGridX = 20; % number of grid in x direction
-numGridY = 20; % number of grid in y direction
+numGridX = 10; % number of grid in x direction
+numGridY = 10; % number of grid in y direction
 
 % Add the electrons
-AddElectrons(numE, Region, vth);
+AddElectrons_Q1(numE, Region, vth);
+
+% Calculate the scattering probability
+Pscat = 1-exp(-deltaT/Tmn);
 
 % Initalize plot
+figure(1)
 ax = axes;
 ax.ColorOrder = rand(numE,3); % Initalize color for each electron
 hold on
@@ -63,23 +67,29 @@ for iSim = 1:numSim
      x = x + vx * deltaT;
      y = y + vy * deltaT;
      
-    % Loop through all the particles for boundary collision
+    % Loop through all the particles 
     for iE=1:numE
+        % flag for invalid
+        bInvalid = false;
         % Check for invalid x position
         if x(iE) < 0
             x(iE) = Region.x; % Appear on right
             xp(iE) = x(iE); 
+            bInvalid = true;
         elseif x(iE) > Region.x
             x(iE) = 0; % Appear on left 
             xp(iE) = x(iE);
+            bInvalid = true;
         end
         % Check for invalid y position
         if y(iE) < 0
             y(iE) = 0; % Reflect
             vy(iE) = -vy(iE);
+            bInvalid = true;
         elseif y(iE) > Region.y
             y(iE) = Region.y; % Reflect
             vy(iE) = -vy(iE);
+            bInvalid = true;
         end
     end
     

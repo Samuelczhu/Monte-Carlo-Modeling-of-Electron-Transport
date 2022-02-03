@@ -20,8 +20,15 @@ deltaY = limitY/numGridY;
 % Loop through all the electrons
 for iE = 1:numE
     % Calculate the x index (column) in the tempeture matrix
-    indexCol = ceil(x(iE)/deltaX);
-    indexRow = ceil(y(iE)/deltaY);
+    indexCol = floor(x(iE)/deltaX);
+    indexRow = floor(y(iE)/deltaY);
+    % Check for invalid index
+    if indexRow <=0
+        indexRow = 1;
+    end
+    if indexCol <= 0
+        indexCol = 1;
+    end
 
     % TODO: Calculate the temperature of the particle
     vth = sqrt(vx(iE)^2 + vy(iE)^2);
