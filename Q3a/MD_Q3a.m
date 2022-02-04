@@ -42,7 +42,7 @@ numEPlot = 7;  % Number of electrons to be plotted
 deltaT = 2e-14; % Time interval per simulation step in second
 pauseTime = 0.02; % Time paused per simulation step in second
 % Number of simulation steps
-numSim = 100;
+numSim = 1000;
 % Temperature grid
 numGridX = 20; % number of grid in x direction
 numGridY = 20; % number of grid in y direction

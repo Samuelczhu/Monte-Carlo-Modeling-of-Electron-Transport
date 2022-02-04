@@ -42,8 +42,6 @@ end
 Temp = matrixTempTotal ./ matrixParticles;
 Temp(isnan(Temp)) = 0;
 
-matrixParticles
-
 % Create the mesh grid
 [X,Y] = meshgrid(linspace(0,limitX,numGridX), linspace(0, limitY, numGridY));
 % Plot the surface
