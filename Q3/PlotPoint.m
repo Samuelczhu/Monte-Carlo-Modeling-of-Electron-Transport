@@ -1,11 +1,12 @@
 % Helper function to plot one point for electron position
-% @param limitX = region limit on the x axis
-%        limitY = region limit on the y axis
-function PlotPoint(numGridX, numGridY)
+% @param  numEPlot = number of electrons to be plotted
+%         numGridX = number of grid on the x axis
+%         numGridY = number of grid on the y axis
+function PlotPoint(numEPlot, numGridX, numGridY)
 global x y xp yp limits
 
 % plot the electron positions
-plot([xp;x], [yp;y])
+plot([xp(1:numEPlot);x(1:numEPlot)], [yp(1:numEPlot);y(1:numEPlot)])
 
 % Adjust the axis limits
 axis(limits)

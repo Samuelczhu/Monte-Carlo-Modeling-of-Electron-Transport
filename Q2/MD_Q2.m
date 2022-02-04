@@ -34,7 +34,8 @@ Tmn = 0.2e-12;  % 0.2ps
 d = Tmn*vth;
 display("Mean path is "+ d);
 % Initialize the number of electrons
-numE = 3;
+numE = 1000;
+numEPlot = 10;  % Number of electron to be plotted
 % Initialize the time
 deltaT = 2e-14; % Time interval per simulation step in second
 pauseTime = 0.02; % Time paused per simulation step in second
@@ -55,12 +56,12 @@ Pscat = 1-exp(-deltaT/Tmn);
 % Initalize plot
 figure(1)
 ax = axes;
-ax.ColorOrder = rand(numE,3); % Initalize color for each electron
+ax.ColorOrder = rand(numEPlot,3); % Initalize color for each electron
 hold on
 
 % Loop for simulation
 for iSim = 1:numSim
-     PlotPoint(numGridX, numGridY);
+     PlotPoint(numEPlot, numGridX, numGridY);
 
      % Store the current positions
      xp = x;
