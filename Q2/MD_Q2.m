@@ -1,4 +1,4 @@
-% This file is the code for ELEC 4700 assignment 1 question 1
+% This file is the code for ELEC 4700 assignment 1 question 2
 % Electron Modeling
 
 % Clear all

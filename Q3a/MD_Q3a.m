@@ -1,4 +1,4 @@
-% This file is the code for ELEC 4700 assignment 1 question 3: basic features
+% This file is the code for ELEC 4700 assignment 1 question 3a: curved surface
 % Electron Modeling
 
 % Clear all
@@ -19,7 +19,8 @@ global x y       % arrays for the current electrons positions: 1 row, colum for 
 global xp yp     % arrays for the previous electrons positions: 1 row, column for previous position
 global vx vy     % arrays for current electrons velocities: 1 row, column for current velocity
 global limits    % Limits for the plot
-global boxes     % matrix for the boxes: n rows, and 4 columns for [x y w h]
+global boxes     % matrix for the boxes: each row is one box with 4 columns for [x y w h]
+global circles   % matrix for the circles: each row is one circle with 3 columns for [x y r]
 % Initalize global constants
 globalVars
 
@@ -40,20 +41,20 @@ numE = 3;
 deltaT = 2e-14; % Time interval per simulation step in second
 pauseTime = 0.02; % Time paused per simulation step in second
 % Number of simulation steps
-numSim = 100;
+numSim = 500;
 % Temperature grid
 numGridX = 10; % number of grid in x direction
 numGridY = 10; % number of grid in y direction
 % Array to hold temperature over time
 tempOverTime = zeros(1,numSim);
 % Boudary mode: specular(0) or diffusive(1)
-boundaryMode = 1;
+boundaryMode = 0;
 
 % Add the boxes
-numBox = AddObstacles();
+[numBox, numCirc] = AddObstacles();
 
 % Add the electrons
-AddElectrons(numE, Region, vth, T, numBox);
+AddElectrons(numE, Region, vth, T, numBox, numCirc);
 
 % Calculate the scattering probability
 Pscat = 1-exp(-deltaT/Tmn);
@@ -66,6 +67,14 @@ hold on
 % Draw the boxes
 for iBox = 1:numBox
     rectangle("Position",boxes(iBox,:));
+end
+% Draw the circles
+for iCirc = 1:numCirc
+    d = circles(iCirc, 3)*2;
+    px = circles(iCirc,1)-circles(iCirc, 3);
+    py = circles(iCirc,2)-circles(iCirc, 3);
+    rectangle("Position",[px py d d], "Curvature",[1,1]);
+    daspect([1,1,1]);
 end
 
 
@@ -85,7 +94,7 @@ for iSim = 1:numSim
         % flag for invalid position
         bInvalid = false;
 
-        % Step 1 - Check for boundary
+        % Step 1 - Check for boundaries
         % Check for invalid x position
         if x(iE) <= 0
             x(iE) = Region.x; % Appear on right
@@ -167,15 +176,46 @@ for iSim = 1:numSim
                 break;
             end
         end
-        
-        % Step 3: Check for scattering
-        if ~bInvalid && Pscat > rand()
-            % Scatter the particle  TODO: Check whether we need phi, Dont
-            
-            % Rethermalize
-            vx(iE) = (sqrt(C.kb*T/C.mn).*randn());
-            vy(iE) = (sqrt(C.kb*T/C.mn).*randn());
+
+        % Step 3: Check for circles if not invalid yet
+        if ~bInvalid
+            for iCirc=1:numCirc
+                % Retrieve the circle info
+                cx = circles(iCirc, 1);
+                cy = circles(iCirc, 2);
+                cr = circles(iCirc, 3);
+                % Check if the particle is inside the circle
+                if (x(iE)-cx)^2 + (y(iE)-cy)^2 <= cr^2
+                    bInvalid = true;   % Invalid position
+                    % First, find the intersection point (xn, yn)
+                    xn=x(iE);  % Default assume on the circle
+                    yn=y(iE);
+                    if (x(iE)-cx)^2 + (y(iE)-cy)^2 < cr^2
+                        [xn, yn] = findLineCircIntersect(xp(iE), yp(iE), x(iE), y(iE),cx,cy,cr);
+                    end
+                    % Second, update the current position to be that intersect point
+                    x(iE) = xn;
+                    y(iE) = yn;
+                    % Third, find the reflected velocity vector
+                    [vrx, vry] = findCircReflect(xn,yn,vx(iE),vy(iE), cx, cy);
+                    % Finally, updates the velocity vector
+                    vx(iE) = vrx;
+                    vy(iE) = vry;
+                    % Break the loop
+                    break;
+                end
+            end
         end
+
+        
+%         % Step 4: Check for scattering
+%         if ~bInvalid && Pscat > rand()
+%             % Scatter the particle  TODO: Check whether we need phi
+%             randPhi = rand()*2*pi;  % Random direction
+%             % Rethermalize
+%             vx(iE) = (sqrt(C.kb*T/C.mn).*randn()+vth) * cos(randPhi);
+%             vy(iE) = (sqrt(C.kb*T/C.mn).*randn()+vth) * sin(randPhi);
+%         end
     end
     
     % Calculate the current average temperature
