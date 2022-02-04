@@ -97,16 +97,17 @@ for iSim = 1:numSim
         
         % Check for scattering
         if ~bInvalid && Pscat > rand()
-            % Scatter the particle
-            randPhi = rand()*2*pi;  % Random direction
             % Rethermalize
-            vx(iE) = (sqrt(C.kb*T/C.mn).*randn()+vth) * cos(randPhi);
-            vy(iE) = (sqrt(C.kb*T/C.mn).*randn()+vth) * sin(randPhi);
+            vx(iE) = sqrt(C.kb*T/C.mn).*randn();
+            vy(iE) = sqrt(C.kb*T/C.mn).*randn();
         end
     end
     
     % Calculate the current average temperature
-    tempOverTime(iSim) = sum(sqrt(vx.^2)+sqrt(vy.^2))/numE;
+    % tempOverTime(iSim) = sum(sqrt(vx.^2)+sqrt(vy.^2))/numE;
+    % tempOverTime(iSim) = C.mn*(sum(vx.^2+vy.^2)/numE)/(2*C.kb);
+    vth2_mean = mean(sqrt(vx.^2+vy.^2)).^2;
+    tempOverTime(iSim) = C.mn*vth2_mean/(2*C.kb);
 
     % Pause some time
     pause(pauseTime);
@@ -120,7 +121,7 @@ figure(4)
 plot(deltaT*(1:numSim), tempOverTime);
 title("Temperature over time");
 xlabel("Time");
-ylabel("velocity");
+ylabel("Temperature");
 ylim([0 inf]);
 grid on
 

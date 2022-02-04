@@ -104,8 +104,8 @@ for iSim = 1:numSim
             % Check for boundary mode
             if boundaryMode == 0  % Specular boundary
                 vy(iE) = -vy(iE);
-            else  % Diffusive boundary  TODO: check randn() is between 0-1, and check for diffusive implementation
-                vy(iE) = (sqrt(C.kb*T/C.mn).*randn()+vth);
+            else  % Diffusive boundary  TODO: check diffusive implementation
+                vy(iE) = abs(sqrt(C.kb*T/C.mn).*randn());  % positive vy
             end
         elseif y(iE) >= Region.y
             y(iE) = Region.y;
@@ -114,7 +114,7 @@ for iSim = 1:numSim
             if boundaryMode == 0  % Specular boundary
                 vy(iE) = -vy(iE);
             else  % Diffusive boundary
-                vy(iE) = -(sqrt(C.kb*T/C.mn).*randn()+vth);
+                vy(iE) = -abs(sqrt(C.kb*T/C.mn).*randn());  % negative vy
             end
         end
 
@@ -135,7 +135,7 @@ for iSim = 1:numSim
                     if boundaryMode == 0  % Specular boundary
                         vx(iE) = -vx(iE);
                     else  % Diffusive boundary
-                        vx(iE) = -(sqrt(C.kb*T/C.mn).*randn()+vth);
+                        vx(iE) = -abs(sqrt(C.kb*T/C.mn).*randn());  % negative vx
                     end                    
                 elseif xp(iE) >= boxX2  % Coming from right side
                     x(iE) = boxX2;                   
@@ -143,7 +143,7 @@ for iSim = 1:numSim
                     if boundaryMode == 0  % Specular boundary
                         vx(iE) = -vx(iE);
                     else  % Diffusive boundary
-                        vx(iE) = (sqrt(C.kb*T/C.mn).*randn()+vth);
+                        vx(iE) = abs(sqrt(C.kb*T/C.mn).*randn());  % positive vx
                     end
                 end
                 % Check for y position
@@ -153,7 +153,7 @@ for iSim = 1:numSim
                     if boundaryMode == 0  % Specular boundary
                         vy(iE) = -vy(iE);
                     else  % Diffusive boundary
-                        vy(iE) = -(sqrt(C.kb*T/C.mn).*randn()+vth);
+                        vy(iE) = -abs(sqrt(C.kb*T/C.mn).*randn());  % negative vy
                     end
                 elseif yp(iE) >= boxY2 % Coming from top
                     y(iE) = boxY2;                   
@@ -161,7 +161,7 @@ for iSim = 1:numSim
                     if boundaryMode == 0  % Specular boundary
                         vy(iE) = -vy(iE);
                     else  % Diffusive boundary
-                        vy(iE) = (sqrt(C.kb*T/C.mn).*randn()+vth);
+                        vy(iE) = abs(sqrt(C.kb*T/C.mn).*randn());  % positive vy
                     end
                 end
                 % Break the loop for box
@@ -171,16 +171,15 @@ for iSim = 1:numSim
         
         % Step 3: Check for scattering
         if ~bInvalid && Pscat > rand()
-            % Scatter the particle  TODO: Check whether we need phi, Dont
-            
-            % Rethermalize
-            vx(iE) = (sqrt(C.kb*T/C.mn).*randn());
-            vy(iE) = (sqrt(C.kb*T/C.mn).*randn());
+            % Rethermalize  TODO: Check rethermalize process is correct
+            vx(iE) = sqrt(C.kb*T/C.mn).*randn();
+            vy(iE) = sqrt(C.kb*T/C.mn).*randn();
         end
     end
     
     % Calculate the current average temperature
-    tempOverTime(iSim) = sum(sqrt(vx.^2)+sqrt(vy.^2))/numE;
+    vth2_mean = mean(sqrt(vx.^2+vy.^2)).^2;
+    tempOverTime(iSim) = C.mn*vth2_mean/(2*C.kb);
 
     % Pause some time
     pause(pauseTime);
@@ -194,7 +193,7 @@ figure(4)
 plot(deltaT*(1:numSim), tempOverTime);
 title("Temperature over time");
 xlabel("Time");
-ylabel("velocity");
+ylabel("Temperature");
 ylim([0 inf]);
 grid on
 

@@ -58,18 +58,11 @@ yp = y;
 % TODO: Verify that this is Maxwell-Boltzmann distribution
 % mean of vth and standard deviation of sqrt(kT/m)
 % Create helper arrays for velocity distrubution
-randVx = sqrt(C.kb*T/C.mn).*randn(1, numE)+vth;
-randVy = sqrt(C.kb*T/C.mn).*randn(1, numE)+vth;
+vx = sqrt(C.kb*T/C.mn).*randn(1, numE);
+vy = sqrt(C.kb*T/C.mn).*randn(1, numE);
 
-% Create a helper array for electrons directions
-phi = rand(1, numE) * 2*pi;  % TODO: check whether we need phi, phi seems to add negative effect
-
-% Create the arrays for current electron velocities
-vx = randVx .* cos(phi);
-vy = randVy .* sin(phi);
-
-% Plot the velocity distribution
-plotMagVDistribution();
+% Plot the temperature distribution
+plotTempDistribution(30);
 
 % TODO: remove this debug
 display("vth = "+vth);
