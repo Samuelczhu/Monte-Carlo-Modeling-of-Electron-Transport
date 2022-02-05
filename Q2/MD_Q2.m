@@ -41,7 +41,7 @@ deltaT = 2e-14; % Time interval per simulation step in second
 pauseTime = 0.02; % Time paused per simulation step in second
 simTime = 0;  % Hold the current simulation time
 % Number of simulation steps
-numSim = 500;
+numSim = 100;
 % Temperature grid
 numGridX = 10; % number of grid in x direction
 numGridY = 10; % number of grid in y direction
