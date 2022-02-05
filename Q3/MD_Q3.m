@@ -40,8 +40,9 @@ numEPlot = 10;  % Number of electron to be plotted
 % Initialize the time
 deltaT = 2e-14; % Time interval per simulation step in second
 pauseTime = 0.02; % Time paused per simulation step in second
+simTime = 0;  % Hold the current simulation time
 % Number of simulation steps
-numSim = 100;
+numSim = 500;
 % Temperature grid
 numGridX = 10; % number of grid in x direction
 numGridY = 10; % number of grid in y direction
@@ -49,6 +50,14 @@ numGridY = 10; % number of grid in y direction
 tempOverTime = zeros(1,numSim);
 % Boudary mode: specular(0) or diffusive(1)
 boundaryMode = 1;
+% Variables for actual mean free paths and mean collision time calculations
+totalFP = 0;  % total free path
+totalFT = 0;  % total free time
+countFPFT = 0;  % count for scattering
+arrScatterPx = zeros(1, numE);  % Hold the previous scattering point: index to target previous point for an electron
+arrScatterPy = zeros(1, numE); 
+arrScatterT = zeros(1, numE);  % Hold the previous scattering time: index to target previous scatter time for an electron
+
 
 % Add the boxes
 numBox = AddObstacles();
@@ -80,6 +89,9 @@ for iSim = 1:numSim
      % Calculate the future positions: x = x0 + vx*t
      x = x + vx * deltaT;
      y = y + vy * deltaT;
+
+     % Increment simulation time
+     simTime = simTime + deltaT;
      
     % Loop through all the particles 
     for iE=1:numE
@@ -174,6 +186,17 @@ for iSim = 1:numSim
             % Rethermalize  TODO: Check rethermalize process is correct
             vx(iE) = sqrt(C.kb*T/C.mn).*randn();
             vy(iE) = sqrt(C.kb*T/C.mn).*randn();
+            % Calculate the free path
+            deltaX = x(iE) - arrScatterPx(iE);
+            deltaY = y(iE) - arrScatterPy(iE);
+            totalFP = totalFP + sqrt(deltaX^2 + deltaY^2);
+            arrScatterPx(iE) = x(iE);  % Update the previous scatter position
+            arrScatterPy(iE) = y(iE);
+            % Calculate the free time
+            totalFT = totalFT + simTime - arrScatterT(iE);
+            arrScatterT(iE) = simTime;  % Update the previous scatter time
+            % Increment the count
+            countFPFT = countFPFT+1;
         end
     end
     
@@ -197,6 +220,12 @@ ylabel("Temperature");
 ylim([0 inf]);
 grid on
 
+
+% Calculate the actual mean free path and mean time between collision
+meanFreePath = totalFP/countFPFT;
+meanTimeCollision = totalFT/countFPFT; 
+display("Actual mean free path: "+meanFreePath);
+display("Mean time between collusion: "+meanTimeCollision);
 
 
 

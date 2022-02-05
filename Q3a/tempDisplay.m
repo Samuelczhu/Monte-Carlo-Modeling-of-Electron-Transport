@@ -56,7 +56,4 @@ surf(X,Y, matrixParticles);
 view(0,90); % view from the top
 title("Density Map")
 
-% TODO: seek help on temperature and density map, they seems not correct
-matrixParticles
-
 end

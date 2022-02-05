@@ -47,12 +47,14 @@ numGridX = 10; % number of grid in x direction
 numGridY = 10; % number of grid in y direction
 % Array to hold temperature over time
 tempOverTime = zeros(1,numSim);
-% Matrix to hold the scattering points for electrons: n rows for n
-% electrons, columns for points at transition
-arrScatterIndex = ones(1, numE);  % Index for each electrons free paths points, increment at collision
-scatterPx = zeros(numE, 100);  % Append at scattering
-scatterPy = zeros(numE, 100);
-collisionT = zeros(numE, 100);  % Matrix to record the collision time
+% Variables for actual mean free paths and mean collision time calculations
+totalFP = 0;  % total free path
+totalFT = 0;  % total free time
+countFPFT = 0;  % count for scattering
+arrScatterPx = zeros(1, numE);  % Hold the previous scattering point: index to target previous point for an electron
+arrScatterPy = zeros(1, numE); 
+arrScatterT = zeros(1, numE);  % Hold the previous scattering time: index to target previous scatter time for an electron
+
 
 % Add the electrons
 AddElectrons(numE, Region, vth, T);
@@ -110,11 +112,17 @@ for iSim = 1:numSim
             % Rethermalize
             vx(iE) = sqrt(C.kb*T/C.mn).*randn();
             vy(iE) = sqrt(C.kb*T/C.mn).*randn();
-            % Record the collision position and collision time
-            scatterPx(iE, arrScatterIndex(iE)) = x(iE);
-            scatterPy(iE, arrScatterIndex(iE)) = y(iE);
-            collisionT(iE, arrScatterIndex(iE)) = simTime;
-            arrScatterIndex(iE) = arrScatterIndex(iE)+1;  % Increment scattering index
+            % Calculate the free path
+            deltaX = x(iE) - arrScatterPx(iE);
+            deltaY = y(iE) - arrScatterPy(iE);
+            totalFP = totalFP + sqrt(deltaX^2 + deltaY^2);
+            arrScatterPx(iE) = x(iE);  % Update the previous scatter position
+            arrScatterPy(iE) = y(iE);
+            % Calculate the free time
+            totalFT = totalFT + simTime - arrScatterT(iE);
+            arrScatterT(iE) = simTime;  % Update the previous scatter time
+            % Increment the count
+            countFPFT = countFPFT+1;
         end
     end
     
@@ -141,30 +149,9 @@ ylim([0 inf]);
 grid on
 
 
-% Mean free path and mean time between collisions
-totalFP = 0;  % total free path
-totalFT = 0;  % total free time
-countFPFT = 0;  % count 
-% Loop to calculate the actual mean free path
-for iE = 1:numE
-    for index=2:(arrScatterIndex(iE)-1)
-        % Calculate the free path
-        deltaX = scatterPx(iE, index) - scatterPx(iE, index-1);
-        deltaY = scatterPy(iE, index) - scatterPy(iE, index-1);
-        totalFP = totalFP+sqrt(deltaX^2 + deltaY^2);
-        % Calculate the free time
-        deltaFT = collisionT(iE, index) - collisionT(iE, index-1);
-        if deltaFT<0
-            deltaFT
-        end
-        totalFT = totalFT + deltaFT;
-        % Increment the count
-        countFPFT = countFPFT+1;
-    end
-end
-% Calculate the actual mean free path
+% Calculate the actual mean free path and mean time between collision
 meanFreePath = totalFP/countFPFT;
-meanTimeCollision = totalFT/countFPFT;  % mean time between collision
+meanTimeCollision = totalFT/countFPFT; 
 display("Actual mean free path: "+meanFreePath);
 display("Mean time between collusion: "+meanTimeCollision);
 
