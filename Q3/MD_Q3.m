@@ -35,7 +35,7 @@ Tmn = 0.2e-12;  % 0.2ps
 d = Tmn*vth;
 display("Mean path is "+ d);
 % Initialize the number of electrons
-numE = 1000;
+numE = 10000;
 numEPlot = 10;  % Number of electron to be plotted
 % Initialize the time
 deltaT = 2e-14; % Time interval per simulation step in second
@@ -44,8 +44,8 @@ simTime = 0;  % Hold the current simulation time
 % Number of simulation steps
 numSim = 500;
 % Temperature grid
-numGridX = 10; % number of grid in x direction
-numGridY = 10; % number of grid in y direction
+numGridX = 20; % number of grid in x direction
+numGridY = 20; % number of grid in y direction
 % Array to hold temperature over time
 tempOverTime = zeros(1,numSim);
 % Boudary mode: specular(0) or diffusive(1)

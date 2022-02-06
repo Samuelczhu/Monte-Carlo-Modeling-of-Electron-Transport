@@ -36,14 +36,14 @@ Tmn = 0.2e-12;  % 0.2ps
 d = Tmn*vth;
 display("Mean path is "+ d);
 % Initialize the number of electrons
-numE = 1000;
-numEPlot = 15;  % Number of electrons to be plotted
+numE = 10000;
+numEPlot = 10;  % Number of electrons to be plotted
 % Initialize the time
 deltaT = 2e-14; % Time interval per simulation step in second
 pauseTime = 0.02; % Time paused per simulation step in second
 simTime = 0;  % Hold the current simulation time
 % Number of simulation steps
-numSim = 100;
+numSim = 500;
 iCreateE = 1;  % Index to created electron
 deltaSimCreateE = 10;  % How many simulation steps per electron created
 % Temperature grid
@@ -61,7 +61,7 @@ arrScatterT = zeros(1, numE);  % Hold the previous scattering time: index to tar
 % Boudary mode: specular(0) or diffusive(1)
 boundaryMode = 0;
 % Turn on scattering?
-bScattering = false;
+bScattering = true;
 
 % Add the boxes
 [numBox, numCirc] = AddObstacles();

@@ -36,7 +36,7 @@ Tmn = 0.2e-12;  % 0.2ps
 d = Tmn*vth;
 display("Mean path is "+ d);
 % Initialize the number of electrons
-numE = 1000;
+numE = 10000;
 numEPlot = 10;  % Number of electrons to be plotted
 % Initialize the time
 deltaT = 2e-14; % Time interval per simulation step in second

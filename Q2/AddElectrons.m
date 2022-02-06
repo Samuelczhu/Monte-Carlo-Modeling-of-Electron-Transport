@@ -17,13 +17,13 @@ yp = y;
 
 % TODO: Verify that this is Maxwell-Boltzmann distribution
 % mean of vth and standard deviation of sqrt(kT/m)
-% Create helper arrays for velocity distrubution
+% Initialize the arrays for velocity distrubution
 vx = sqrt(C.kb*T/C.mn).*randn(1, numE);
 vy = sqrt(C.kb*T/C.mn).*randn(1, numE);
 
-% Plot the temperature distribution
-plotTempDistribution(30);
+% Plot the Vth distribution
+plotVthDistribution(30);
 
-% TODO: remove this debug
+% Display the vth to compare with the actual distribution 
 display("vth = "+vth);
 end

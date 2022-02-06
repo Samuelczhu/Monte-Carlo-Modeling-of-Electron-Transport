@@ -21,6 +21,4 @@ phi = rand(1, numE) * 2*pi;
 vx = vth .* cos(phi);
 vy = vth .* sin(phi);
 
-% TODO: remove this debug
-display("vth = "+vth);
 end

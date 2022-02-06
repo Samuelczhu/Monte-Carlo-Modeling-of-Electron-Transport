@@ -32,16 +32,16 @@ vth = sqrt(2*C.kb*T/C.mn);  % Calculate the thermal velocity
 % Initialize the mean time between collision
 Tmn = 0.2e-12;  % 0.2ps
 d = Tmn*vth;
-display("Mean path is "+ d);
+display("Expected Mean free path is "+ d);
 % Initialize the number of electrons
-numE = 1000;
+numE = 10000;
 numEPlot = 10;  % Number of electron to be plotted
 % Initialize the time
 deltaT = 2e-14; % Time interval per simulation step in second
 pauseTime = 0.02; % Time paused per simulation step in second
 simTime = 0;  % Hold the current simulation time
 % Number of simulation steps
-numSim = 100;
+numSim = 500;
 % Temperature grid
 numGridX = 10; % number of grid in x direction
 numGridY = 10; % number of grid in y direction
@@ -153,7 +153,7 @@ grid on
 meanFreePath = totalFP/countFPFT;
 meanTimeCollision = totalFT/countFPFT; 
 display("Actual mean free path: "+meanFreePath);
-display("Mean time between collusion: "+meanTimeCollision);
+display("Mean time between collision: "+meanTimeCollision);
 
 
 

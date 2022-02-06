@@ -20,5 +20,4 @@ title("Electron Modeling");
 xlabel("X")
 ylabel("Y")
 
-
 end

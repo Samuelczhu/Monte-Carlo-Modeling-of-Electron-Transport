@@ -29,21 +29,24 @@ limits = [0 Region.x 0 Region.y];  % plot limit
 % Initialize the temperature
 T = 300;  % K
 vth = sqrt(2*C.kb*T/C.mn);  % Calculate the thermal velocity
+display("vth = "+vth);
 % Initialize the mean time between collision
 Tmn = 0.2e-12;  % 0.2ps
-d = Tmn*vth;
+d = Tmn*vth;  % Calculate the mean free path
 display("Mean path is "+ d);
 % Initialize the number of electrons
-numE = 1000;
-numEPlot = 10;
+numE = 10000;
+numEPlot = 7;
 % Initialize the time
 deltaT = 2e-14; % Time interval per simulation step in second
 pauseTime = 0.02; % Time paused per simulation step in second
 % Number of simulation steps
-numSim = 100;
+numSim = 500;
 % Temperature grid
 numGridX = 10; % number of grid in x direction
 numGridY = 10; % number of grid in y direction
+% Array to hold temperature over time
+tempOverTime = zeros(1,numSim);
 
 % Add the electrons
 AddElectrons(numE, Region, vth);
@@ -93,6 +96,10 @@ for iSim = 1:numSim
             bInvalid = true;
         end
     end
+
+    % Calculate the current average temperature
+    vth2_mean = mean(sqrt(vx.^2+vy.^2)).^2;
+    tempOverTime(iSim) = C.mn*vth2_mean/(2*C.kb);
     
     % Pause some time
     pause(pauseTime);
@@ -100,6 +107,34 @@ end
 
 % Plot the temperature plot
 tempDisplay(numGridX, numGridY, numE, Region.x, Region.y);
+
+% Plot average temperature over time
+figure(4)
+plot(deltaT*(1:numSim), tempOverTime);
+title("Temperature over time");
+xlabel("Time");
+ylabel("Temperature");
+ylim([0 inf]);
+grid on
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
