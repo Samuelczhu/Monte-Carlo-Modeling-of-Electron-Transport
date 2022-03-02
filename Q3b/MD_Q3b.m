@@ -61,7 +61,7 @@ arrScatterT = zeros(1, numE);  % Hold the previous scattering time: index to tar
 % Boudary mode: specular(0) or diffusive(1)
 boundaryMode = 0;
 % Turn on scattering?
-bScattering = true;
+bScattering = false;
 
 % Add the boxes
 [numBox, numCirc] = AddObstacles();
@@ -277,8 +277,8 @@ tempDisplay(numGridX, numGridY, iCreateE, Region.x, Region.y);
 figure(4)
 plot(deltaT*(1:numSim), tempOverTime);
 title("Temperature over time");
-xlabel("Time");
-ylabel("Temperature");
+xlabel("Time (s)");
+ylabel("Temperature (K)");
 ylim([0 inf]);
 grid on
 

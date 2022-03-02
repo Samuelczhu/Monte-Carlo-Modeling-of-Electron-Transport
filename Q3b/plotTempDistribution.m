@@ -13,6 +13,6 @@ T = C.mn * Vsqrt.^2 / (2*C.kb);
 figure(3)
 hist(T, nbins);
 title("Temperature Distribution")
-ylabel("Counts")
-xlabel("Temperature")
+ylabel("Counts (number)")
+xlabel("Temperature (K)")
 end

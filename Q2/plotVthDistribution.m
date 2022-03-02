@@ -10,6 +10,6 @@ Vth_data = sqrt(vx.^2 + vy.^2);
 figure(3)
 hist(Vth_data, nbins);
 title("Vth Distribution")
-ylabel("Counts")
-xlabel("Velocity")
+ylabel("Counts (number)")
+xlabel("Velocity (m/s)")
 end

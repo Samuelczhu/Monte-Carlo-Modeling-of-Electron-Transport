@@ -17,7 +17,7 @@ grid on
 
 % Add title and labels
 title("Electron Modeling");
-xlabel("X")
-ylabel("Y")
+xlabel("Length (m)")
+ylabel("Width (m)")
 
 end

@@ -143,8 +143,8 @@ tempDisplay(numGridX, numGridY, numE, Region.x, Region.y);
 figure(4)
 plot(deltaT*(1:numSim), tempOverTime);
 title("Temperature over time");
-xlabel("Time");
-ylabel("Temperature");
+xlabel("Time (s)");
+ylabel("Temperature (K)");
 ylim([0 inf]);
 grid on
 

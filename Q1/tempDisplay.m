@@ -51,5 +51,7 @@ Temp(isnan(Temp)) = 0;
 figure(2)
 surf(X,Y,Temp);
 view(0,90); % view from the top
-
+title("Temperature map")
+xlabel("Length (m)")
+ylabel("Width (m)")
 end

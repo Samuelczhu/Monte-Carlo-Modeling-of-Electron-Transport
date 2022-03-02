@@ -45,11 +45,15 @@ figure(2)
 surf(X,Y,Temp);
 view(0,90); % view from the top
 title("Temperature Map")
+xlabel("Length (m)")
+ylabel("Width (m)")
 
 % Plot the surface for density map
 figure(5)
 surf(X,Y, matrixParticles);
 view(0,90); % view from the top
 title("Density Map")
+xlabel("Length (m)")
+ylabel("Width (m)")
 
 end
